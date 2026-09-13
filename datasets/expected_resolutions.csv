@@ -1,0 +1,31 @@
+invoice_no,outcome,expected_po_number,expected_po_line,scenario,contact_email,notes
+5105600121,reassign_po,4500000017,10,po_line,oliver.grant@example.com,Cited PO 4500000064 belongs to Vitamer Nutrients Inc; Invoice text paraphrases the PO line item.
+5105600122,reassign_po,4500000036,10,po_line,nadia.belkacem@example.com,Cited PO 4500000095 belongs to Harborlink Logistics; Invoice text paraphrases the PO line item.
+5105600123,reassign_po,4500000025,10,po_line,greta.lindqvist@example.com,Cited PO 4500000027 belongs to Ecopack Solutions; Invoice text paraphrases the PO line item.
+5105600124,reassign_po,4500000046,20,po_line,viktor.horvath@example.com,Cited PO 4500000091 belongs to Vantex Equipment Co; Invoice text paraphrases the PO line item.
+5105600125,reassign_po,4500000033,40,po_line,mateo.alvarez@example.com,Cited PO 4500000023 belongs to Verdant Packaging Co; Invoice text paraphrases the PO line item.
+5105600126,reassign_po,4500000007,40,po_line,camille.dubois@example.com,Cited PO 4500000018 belongs to Avonia Actives; Invoice text paraphrases the PO line item.
+5105600127,reassign_po,4500000050,10,po_line,yuki.tanaka@example.com,Cited PO 4500000037 belongs to Beckett Industrial; Invoice text paraphrases the PO line item.
+5105600128,reassign_po,4500000026,20,po_line,mei.lin@example.com,Cited PO 4500000032 belongs to Neroprox Industrial Co; Invoice text paraphrases the PO line item.
+5105600129,reassign_po,4500000077,10,po_line,yuki.tanaka@example.com,Cited PO 4500000011 belongs to Helio Actives GmbH; Invoice text paraphrases the PO line item.
+5105600130,reassign_po,4500000048,50,po_line,lars.jorgensen@example.com,Cited PO 4500000073 belongs to Verdant Packaging Co; Invoice text paraphrases the PO line item.
+5105600131,reassign_po,4500000052,40,cost_centre,yuki.tanaka@example.com,"Cited PO 4500000046 belongs to Meridian Cold Chain; Invoice text points at cost centre 0000001030 (Blending and Mixing), not the line item."
+5105600132,reassign_po,4500000085,40,cost_centre,camille.dubois@example.com,"Cited PO 4500000064 belongs to Vitamer Nutrients Inc; Invoice text points at cost centre 0000001410 (Facilities Management), not the line item."
+5105600133,reassign_po,4500000078,10,cost_centre,greta.lindqvist@example.com,"Cited PO 4500000031 belongs to Sterling Manufacturing; Invoice text points at cost centre 0000001310 (Warehouse Operations), not the line item."
+5105600134,reassign_po,4500000093,60,cost_centre,viktor.horvath@example.com,"Cited PO 4500000062 belongs to Solmera Chemicals; Invoice text points at cost centre 0000001410 (Facilities Management), not the line item."
+5105600135,reassign_po,4500000004,10,cost_centre,imani.washington@example.com,"Cited PO 4500000056 belongs to Yeast Dynamics Co; Invoice text points at cost centre 0000001030 (Blending and Mixing), not the line item."
+5105600136,reassign_po,4500000053,40,wbse,hassan.rahimi@example.com,"Cited PO 4500000004 belongs to Prairie Grain Millers; Invoice text points at WBS element PRJ-2024-007.1 (Line 2 Capacity Uplift - Civils), not the line item."
+5105600137,reassign_po,4500000051,10,wbse,camille.dubois@example.com,"Cited PO 4500000077 belongs to Ecopack Solutions; Invoice text points at WBS element PRJ-2024-007.1 (Line 2 Capacity Uplift - Civils), not the line item."
+5105600138,reassign_po,4500000058,20,wbse,ahmed.faruq@example.com,"Cited PO 4500000097 belongs to Castellan Warehousing; Invoice text points at WBS element PRJ-2024-007.1 (Line 2 Capacity Uplift - Civils), not the line item."
+5105600139,reassign_po,4500000088,30,wbse,daniel.okonkwo@example.com,"Cited PO 4500000027 belongs to Ecopack Solutions; Invoice text points at WBS element PRJ-2025-009.1 (Boiler Replacement Programme), not the line item."
+5105600140,reassign_po,4500000065,10,wbse,lars.jorgensen@example.com,"Cited PO 4500000063 belongs to Benzo Fine Chemicals; Invoice text points at WBS element PRJ-2025-002.1 (Sunscreen Range Launch - Formulation), not the line item."
+5105600141,accept_cited_po,4500000031,30,vendor_group,fiona.oleary@example.com,"Invoice from Sterling Mfg Co. against a PO held by Sterling Manufacturing; same supplier group, so the cited PO is correct"
+5105600142,accept_cited_po,4500000081,10,vendor_group,viktor.horvath@example.com,"Invoice from Sterling Mfg Co. against a PO held by Sterling Manufacturing; same supplier group, so the cited PO is correct"
+5105600143,accept_cited_po,4500000005,40,vendor_group,imani.washington@example.com,"Invoice from Northfield Mills Inc. against a PO held by Northfield Flour Mills; same supplier group, so the cited PO is correct"
+5105600144,accept_cited_po,4500000031,10,vendor_group,fiona.oleary@example.com,"Invoice from Sterling Mfg Co. against a PO held by Sterling Manufacturing; same supplier group, so the cited PO is correct"
+5105600145,accept_cited_po,4500000031,10,vendor_group,fiona.oleary@example.com,"Invoice from Sterling Mfg Co. against a PO held by Sterling Manufacturing; same supplier group, so the cited PO is correct"
+5105600146,escalate,,,unresolved,camille.dubois@example.com,No purchase order for Polymer Craft Ltd covers market research study; needs the requester to confirm whether a PO exists.
+5105600147,escalate,,,unresolved,camille.dubois@example.com,No purchase order for Styrene Works Ltd covers office plant hire; needs the requester to confirm whether a PO exists.
+5105600148,escalate,,,unresolved,ahmed.faruq@example.com,No purchase order for Cappaberry Trading covers trade show stand hire; needs the requester to confirm whether a PO exists.
+5105600149,escalate,,,unresolved,sofia.reyes@example.com,No purchase order for Avonia Actives covers brand photography shoot; needs the requester to confirm whether a PO exists.
+5105600150,escalate,,,unresolved,lars.jorgensen@example.com,No purchase order for Cartona Paper Mills covers brand photography shoot; needs the requester to confirm whether a PO exists.

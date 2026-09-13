@@ -1,0 +1,13 @@
+cost_centre_id,cost_centre_name,email
+0000001010,Production Line 1,marta.kowalczyk@example.com
+0000001020,Production Line 2,dev.ramaswamy@example.com
+0000001030,Blending and Mixing,hannah.beaumont@example.com
+0000001040,Packaging Hall,tomas.eriksen@example.com
+0000001110,Plant Maintenance,grace.mbeki@example.com
+0000001120,Utilities and Boilerhouse,ivan.petrov@example.com
+0000001210,Quality Laboratory,lucia.ferraro@example.com
+0000001220,Regulatory Affairs,noor.haddad@example.com
+0000001310,Warehouse Operations,kenji.watanabe@example.com
+0000001320,Inbound Logistics,aoife.brennan@example.com
+0000001330,Outbound Distribution,samuel.adeyemi@example.com
+0000001410,Facilities Management,petra.novak@example.com
