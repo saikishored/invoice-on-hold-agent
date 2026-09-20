@@ -35,3 +35,10 @@ folder `datasets` contains synthetic data
 5. Need to mention on Sanctions check and VAT check. A handler can be added that does legal compliance checks. If it not checks, at lest a +ve response can be given
 6. DynamoDB holds only the invoice workflow state and streams to Lambda
 7. Define agentLevel in config.ts - either 3 or 4. When set to 3, agent asks for AP SME confirmation. When set to 4, it decides the course of action based on confidence score
+8. Need to think about context, business unit, common exceptions, vendor wise exceptions, duplicate check
+9. circuit breakers, fallback mechanisms, retry policies
+10. Instead of S3, use dynamodb for audit trail ? S3 can be used only if trail goes beyond 400 KB
+11. Think about multi agent, if it is required. 2nd agent performs audit. Is it required. It could be a stream from Dynamodb that triggers audit agent
+12. Data Governance
+13. Feedback loop - when user_comments added, it should trigger an agent that summarizes and updates learnings
+14. Performance metrics of agent need to be included in POC. Identify the agent metrics first
