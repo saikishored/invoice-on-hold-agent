@@ -17,12 +17,30 @@ generator; it is not written to the CSV.
 Three near-duplicate name pairs are planted on purpose (VARIANT_PAIRS) to
 support the "invoice arrives under a group company's other trading name"
 scenario.
+
+Every vendor also carries a tax id and a registered address (SAP LFA1: STCEG,
+STRAS, ORT01, PSTLZ, LAND1). Country is derived from the legal suffix of the
+name, and the tax id is formatted the way that country's registration number
+looks, so an id read off an invoice is recognisable on sight. Non-ASCII
+characters are transliterated, as they usually are in an ERP vendor master.
+
+These two fields are what make the vendor group question answerable without
+KONZS. For each planted pair the variant shares the parent's registered
+address exactly but holds its own tax id -- separate legal entities filing
+from one registered office, which is what a real supplier group looks like.
+A differing tax id therefore disproves "same entity", while a shared address
+plus a similar name is evidence of "same group". Master data here is clean;
+the fuzziness lives on the invoice side, where the same details arrive by OCR.
 """
 
 import csv
+import random
+import string
 from pathlib import Path
 
 DATASETS = Path(__file__).resolve().parents[2] / "datasets"
+
+ADDRESS_SEED = 20250911
 
 INGREDIENTS = "ingredients"
 CHEMICALS = "chemicals"
@@ -81,16 +99,120 @@ VENDORS = [
     ("0000178835", "Castellan Warehousing", LOGISTICS),
     # planted name variants of existing vendors (see module docstring)
     ("0000180492", "Sterling Mfg Co.", INDUSTRIAL),
-    ("0000182157", "Polymer Craft Ltd", PACKAGING),
+    ("0000182157", "Polymer Craft Co.", PACKAGING),
     ("0000183704", "Northfield Mills Inc.", INGREDIENTS),
 ]
 
-# confusable vendor_id -> vendor_id of the group company it resembles
+# confusable vendor_id -> vendor_id of the group company it resembles.
+# A variant's legal suffix has to imply the same country as its parent, since
+# the two share a registered office; main() asserts it.
 VARIANT_PAIRS = {
     "0000180492": "0000154170",  # Sterling Mfg Co.     <-> Sterling Manufacturing
-    "0000182157": "0000138405",  # Polymer Craft Ltd    <-> Polymer Craft Industries
+    "0000182157": "0000138405",  # Polymer Craft Co.    <-> Polymer Craft Industries
     "0000183704": "0000110264",  # Northfield Mills Inc <-> Northfield Flour Mills
 }
+
+VENDOR_NAMES = {vendor_id: name for vendor_id, name, _ in VENDORS}
+
+# Country of registration, from the legal suffix of the vendor name. Anything
+# without a recognised suffix is a US entity.
+COUNTRY_BY_SUFFIX = {"Ltd": "GB", "GmbH": "DE", "AG": "DE", "BV": "NL", "AS": "NO"}
+
+
+def country_for(vendor_name: str) -> str:
+    return COUNTRY_BY_SUFFIX.get(vendor_name.split()[-1].rstrip("."), "US")
+
+
+# Street naming follows each country's own convention: number first in the US
+# and UK, number after the street name on the continent.
+STREETS = {
+    "US": ["Beckford Road", "Union Wharf Drive", "Kiln Lane", "Foundry Avenue",
+           "Canal Street", "Millrace Boulevard", "Harbor Point Road",
+           "Ironworks Parkway", "Depot Street", "Cooperage Drive"],
+    "GB": ["Tannery Road", "Bridgewater Way", "Kingsmill Lane",
+           "Albion Works Road", "Quayside Trading Estate", "Fosse Park Avenue"],
+    "DE": ["Industriestrasse", "Hafenweg", "Werkstrasse", "Chemieparkallee"],
+    "NL": ["Havenweg", "Fabrieksstraat", "Industrieweg", "Zuiderkade"],
+    "NO": ["Verkstedveien", "Havnegata", "Industriveien", "Fabrikkgata"],
+}
+
+# GB cities carry a postcode area so the postcode reads correctly for the
+# town; the other countries' formats do not encode the city.
+CITIES = {
+    "US": ["Chicago IL", "Cincinnati OH", "Newark NJ", "Fresno CA",
+           "Savannah GA", "Milwaukee WI", "Louisville KY", "Tacoma WA"],
+    "GB": ["Manchester", "Leeds", "Bristol", "Hull", "Sheffield", "Swansea"],
+    "DE": ["Ludwigshafen", "Leverkusen", "Hamburg", "Nuernberg"],
+    "NL": ["Rotterdam", "Eindhoven", "Zwolle"],
+    "NO": ["Bergen", "Trondheim", "Drammen"],
+}
+
+GB_POSTCODE_AREA = {
+    "Manchester": "M", "Leeds": "LS", "Bristol": "BS",
+    "Hull": "HU", "Sheffield": "S", "Swansea": "SA",
+}
+
+
+def _postal_code(rng: random.Random, country: str, city: str) -> str:
+    letters = string.ascii_uppercase
+    if country == "GB":
+        return "{}{} {}{}{}".format(
+            GB_POSTCODE_AREA[city], rng.randint(1, 30), rng.randint(1, 9),
+            rng.choice(letters), rng.choice(letters),
+        )
+    if country == "NL":
+        return "{} {}{}".format(
+            rng.randint(1000, 9999), rng.choice(letters), rng.choice(letters))
+    if country == "NO":
+        return str(rng.randint(1000, 9999))
+    # US ZIP and German PLZ are both five digits
+    return "{:05d}".format(rng.randint(10000, 99999))
+
+
+def _street(rng: random.Random, country: str) -> str:
+    name = rng.choice(STREETS[country])
+    number = rng.randint(1, 240)
+    if country in ("US", "GB"):
+        return "{} {}".format(number, name)
+    return "{} {}".format(name, number)
+
+
+def _tax_id(rng: random.Random, country: str) -> str:
+    """A registration number in the shape that country actually issues."""
+    if country == "US":  # EIN
+        return "{:02d}-{:07d}".format(rng.randint(10, 99), rng.randint(1000000, 9999999))
+    digits = "{:09d}".format(rng.randint(100000000, 999999999))
+    if country == "NL":
+        return "NL{}B01".format(digits)
+    if country == "NO":
+        return "NO{}MVA".format(digits)
+    return "{}{}".format(country, digits)
+
+
+def _address_book() -> dict[str, tuple[str, str, str, str, str]]:
+    """vendor_id -> (tax_id, street, city, postal_code, country).
+
+    Variants inherit the parent's address but never its tax id: one
+    registered office, two legal entities.
+    """
+    rng = random.Random(ADDRESS_SEED)
+    book: dict[str, tuple[str, str, str, str, str]] = {}
+    for vendor_id, vendor_name, _ in VENDORS:
+        country = country_for(vendor_name)
+        city = rng.choice(CITIES[country])
+        book[vendor_id] = (
+            _tax_id(rng, country), _street(rng, country), city,
+            _postal_code(rng, country, city), country,
+        )
+
+    for variant_id, parent_id in VARIANT_PAIRS.items():
+        _, street, city, postal_code, country = book[parent_id]
+        book[variant_id] = (_tax_id(rng, country), street, city, postal_code, country)
+
+    return book
+
+
+VENDOR_DETAILS = _address_book()
 
 # (cost_centre_id, cost_centre_name, email)
 # One owner mailbox per cost centre: who a hold on this spend routes to.
@@ -149,11 +271,28 @@ def _write(path: Path, header: list[str], rows: list[tuple]) -> None:
 
 
 def main() -> None:
-    vendor_rows = [(vid, name) for vid, name, _ in VENDORS]
+    vendor_rows = [(vid, name) + VENDOR_DETAILS[vid] for vid, name, _ in VENDORS]
     assert len({r[0] for r in vendor_rows}) == len(vendor_rows), "duplicate vendor_id"
     assert len({r[1] for r in vendor_rows}) == len(vendor_rows), "duplicate vendor_name"
+    assert len({r[2] for r in vendor_rows}) == len(vendor_rows), "duplicate tax_id"
 
-    _write(DATASETS / "master_data_vendors.csv", ["vendor_id", "vendor_name"], vendor_rows)
+    # the planted pairs are the whole point: same address, different tax id
+    for variant_id, parent_id in VARIANT_PAIRS.items():
+        variant, parent = VENDOR_DETAILS[variant_id], VENDOR_DETAILS[parent_id]
+        assert variant[1:] == parent[1:], "{} must share the parent address".format(variant_id)
+        assert variant[0] != parent[0], "{} must hold its own tax id".format(variant_id)
+        assert country_for(VENDOR_NAMES[variant_id]) == parent[4], (
+            "{} is named for a country its shared registered office is not in".format(variant_id))
+
+    # nobody else may collide on address, or the group signal becomes noise
+    others = [d[1:4] for vid, d in VENDOR_DETAILS.items() if vid not in VARIANT_PAIRS]
+    assert len(set(others)) == len(others), "unplanted vendors share an address"
+
+    _write(
+        DATASETS / "master_data_vendors.csv",
+        ["vendor_id", "vendor_name", "tax_id", "street", "city", "postal_code", "country"],
+        vendor_rows,
+    )
     _write(
         DATASETS / "master_data_cost_centre.csv",
         ["cost_centre_id", "cost_centre_name", "email"],

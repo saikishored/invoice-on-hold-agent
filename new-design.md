@@ -187,7 +187,7 @@ Fixed at idle: Secrets Manager secret, CloudWatch retention. Variable: Aurora AC
 ## 15. Open items
 
 - Bank-detail validation (different hold reason) — defer or stub.
-- Tax ID / address on vendor master and invoice text — add (small).
+- Tax ID / address on vendor master and invoice text — done; `compare_vendors` now has real fields to compare.
 - Level-4 confidence threshold and how confidence is computed.
 - Duplicate-invoice check, business-unit context — future scope.
 - Circuit breaker / fallback when Bedrock throttles: queue backs up by design; alarm on age of oldest message.

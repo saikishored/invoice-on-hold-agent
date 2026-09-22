@@ -9,6 +9,27 @@ Header fields:
   lines_description    the detail table as OCR captured it, JSON encoded. Real
                        scanners vary, so some invoices carry plain strings and
                        others carry {sno, text, qty, amount} objects.
+  billing_tax_id       the vendor's registration number, off the invoice
+  billing_address      the vendor's billing address, flattened to one line
+
+The last two are the billing block the vendor prints on its own invoice --
+who is billing, not who is being billed. A buyer-side "bill to" is the same
+on every invoice here and so carries no signal; the vendor's own details are
+what tie the paper to a row in the vendor master.
+
+They arrive by OCR like everything else, so they are the dirty copy of clean
+master data: the address comes flattened into one comma-separated line, street
+types are sometimes abbreviated, and a postcode or country line is sometimes
+lost off the edge. The tax id is missed outright on about one invoice in
+seven, which is the realistic case the agent has to survive -- a missing tax
+id is not evidence of anything.
+
+Matching them back gives the agent two independent checks the description
+paths cannot give it: a tax id that differs from the cited PO's vendor
+disproves "same entity", and an address that matches that vendor's anyway is
+what distinguishes a sister company from a stranger. The vendor_group
+invoices therefore always carry a complete, legible billing block; without it
+that scenario is not decidable and the expected answer would be unfair.
 
 Statuses:
   posted  clean invoices that matched their PO. They consume PO line value,
@@ -101,6 +122,20 @@ FILLER_LINES = [
     "handling charges", "delivery charges", "administration fee",
     "fuel surcharge", "packaging and freight",
 ]
+
+# Street types as a scanner abbreviates them. Continental street names are one
+# word, so the suffix is abbreviated in place.
+STREET_ABBREVIATIONS = [
+    ("Road", "Rd"), ("Street", "St"), ("Avenue", "Ave"), ("Drive", "Dr"),
+    ("Lane", "Ln"), ("Boulevard", "Blvd"), ("Parkway", "Pkwy"),
+    ("Trading Estate", "Trd Est"), ("strasse", "str."),
+]
+
+# the two companies of a planted pair, in both directions
+GROUP_SIBLINGS: dict[str, str] = {}
+for _variant, _parent in VARIANT_PAIRS.items():
+    GROUP_SIBLINGS[_variant] = _parent
+    GROUP_SIBLINGS[_parent] = _variant
 
 # spend this buyer never raises a PO for, used for the unresolvable cases
 UNRELATED_ITEMS = [
@@ -226,6 +261,40 @@ def _clerk_line_text(rng: random.Random, po_line_description: str) -> str:
     return (text[0].upper() + text[1:])[:LINE_TEXT_MAX]
 
 
+def _ocr_tax_id(rng: random.Random, tax_id: str, allow_missing: bool = True) -> str:
+    """The registration number as the scanner read it off the invoice.
+
+    Vendors print the same number several ways, so separators are not
+    reliable: an EIN loses its hyphen, a VAT number gains a space after the
+    country prefix. Comparison has to strip them.
+    """
+    roll = rng.random()
+    if allow_missing and roll < 0.15:
+        return ""  # the tax line was cropped or too faint to read
+    if roll < 0.40:
+        if "-" in tax_id:
+            return tax_id.replace("-", "")
+        return "{} {}".format(tax_id[:2], tax_id[2:])
+    return tax_id
+
+
+def _ocr_address(rng: random.Random, vendor: dict, complete: bool = False) -> str:
+    """The vendor's address block, flattened the way OCR flattens it."""
+    street = vendor["street"]
+    if rng.random() < 0.30:
+        for long, short in STREET_ABBREVIATIONS:
+            street = street.replace(long, short)
+
+    parts = [street, vendor["city"], vendor["postal_code"], vendor["country"]]
+    if not complete:
+        roll = rng.random()
+        if roll < 0.15:
+            del parts[2]  # postcode not picked up
+        elif roll < 0.35:
+            del parts[3]  # country line cropped off the bottom
+    return ", ".join(parts)
+
+
 def _amount(value: float) -> str:
     return "{:.2f}".format(round(value, 2))
 
@@ -257,7 +326,8 @@ def _lines_description(rng: random.Random, texts: list[str], amounts: list[float
 def build() -> tuple[list[tuple], list[tuple], list[tuple]]:
     rng = random.Random(SEED)
 
-    vendors = {v["vendor_id"]: v["vendor_name"] for v in _read("master_data_vendors.csv")}
+    vendor_master = {v["vendor_id"]: v for v in _read("master_data_vendors.csv")}
+    vendors = {vid: v["vendor_name"] for vid, v in vendor_master.items()}
     cost_centres = {c["cost_centre_id"]: c["cost_centre_name"]
                     for c in _read("master_data_cost_centre.csv")}
     wbs = {w["wbse_id"]: w["wbse_name"] for w in _read("master_data_wbse.csv")}
@@ -270,6 +340,9 @@ def build() -> tuple[list[tuple], list[tuple], list[tuple]]:
         lines_by_vendor[po_headers[line["po_number"]]["vendor_id"]].append(line)
 
     note_rng = random.Random(SEED + 1)
+    # OCR noise draws from its own stream, so adding it leaves every other
+    # column of every existing invoice exactly where it was
+    ocr_rng = random.Random(SEED + 2)
 
     headers: list[tuple] = []
     lines: list[tuple] = []
@@ -280,16 +353,20 @@ def build() -> tuple[list[tuple], list[tuple], list[tuple]]:
         counter[0] += 1
         return str(FIRST_INVOICE_NUMBER + counter[0] - 1)
 
-    def emit(vendor_id, cited_po, po_line, status, body, texts, total, period_end):
+    def emit(vendor_id, cited_po, po_line, status, body, texts, total, period_end,
+             full_billing_block=False):
         invoice_no = next_invoice_no()
         invoice_date = period_end + timedelta(days=rng.randint(5, 40))
         currency = currency_for(vendors[vendor_id])
         amounts = _split_amount(rng, total, len(texts))
+        vendor = vendor_master[vendor_id]
         headers.append((
             invoice_no, vendor_id, invoice_date.isoformat(), currency,
             cited_po, _amount(total), status,
             rng.choice(HEADER_TEMPLATES).format(body=body),
             _lines_description(rng, texts, amounts),
+            _ocr_tax_id(ocr_rng, vendor["tax_id"], allow_missing=not full_billing_block),
+            _ocr_address(ocr_rng, vendor, complete=full_billing_block),
         ))
         if status == "posted":
             # the vendor may split the invoice into several OCR rows, but SAP
@@ -338,9 +415,16 @@ def build() -> tuple[list[tuple], list[tuple], list[tuple]]:
 
     # ---------------- parked invoices ----------------
     def cited_po_from_other_vendor(vendor_id: str) -> str:
+        """A PO belonging to someone else, and never to a group sibling.
+
+        A sibling's PO would make the invoice a vendor_group case -- same
+        address, different tax id -- with a different right answer to the one
+        the scenario records.
+        """
+        excluded = {vendor_id, GROUP_SIBLINGS.get(vendor_id)}
         while True:
             po_number, header = rng.choice(list(po_headers.items()))
-            if header["vendor_id"] != vendor_id:
+            if header["vendor_id"] not in excluded:
                 return po_number
 
     scenarios = [s for s, n in SCENARIO_COUNTS.items() for _ in range(n)]
@@ -358,13 +442,16 @@ def build() -> tuple[list[tuple], list[tuple], list[tuple]]:
             key = (po_line["po_number"], po_line["line_number"])
             total = round(open_value[key] * rng.uniform(0.3, 0.7), 2)
             invoice_no = emit(variant_id, po_line["po_number"], po_line, "parked",
-                              body, texts_for(po_line, body, 1), total, period_end)
+                              body, texts_for(po_line, body, 1), total, period_end,
+                              full_billing_block=True)
             expected.append((
                 invoice_no, "accept_cited_po", po_line["po_number"],
                 po_line["line_number"], "vendor_group",
                 po_headers[po_line["po_number"]]["requester"],
-                "Invoice from {} against a PO held by {}; same supplier group, "
-                "so the cited PO is correct".format(vendors[variant_id], vendors[parent_id]),
+                "Invoice from {} against a PO held by {}; separate tax ids "
+                "filed from one registered address, so the two are the same "
+                "supplier group and the cited PO is correct".format(
+                    vendors[variant_id], vendors[parent_id]),
             ))
             continue
 
@@ -451,10 +538,18 @@ def main() -> None:
     parked_numbers = {h[0] for h in parked}
     assert not any(l[0] in parked_numbers for l in lines), "parked invoices have no lines"
 
+    # the group scenario is only decidable if its billing block survived OCR
+    group_invoices = {e[0] for e in expected if e[4] == "vendor_group"}
+    for header in headers:
+        assert header[10], "{} has no billing address".format(header[0])
+        if header[0] in group_invoices:
+            assert header[9], "{} needs a legible tax id".format(header[0])
+
     _write(
         DATASETS / "invoices_headers.csv",
         ["invoice_no", "vendor_id", "invoice_date", "currency", "po_number",
-         "amount", "status", "invoice_description", "lines_description"],
+         "amount", "status", "invoice_description", "lines_description",
+         "billing_tax_id", "billing_address"],
         headers,
     )
     _write(

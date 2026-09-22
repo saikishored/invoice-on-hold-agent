@@ -1,51 +1,51 @@
-vendor_id,vendor_name
-0000103417,Marland Sweeteners Inc.
-0000104882,Cane & Beet Refiners Ltd
-0000106235,Amber Syrup Traders
-0000108710,Prairie Grain Millers
-0000110264,Northfield Flour Mills
-0000112938,Yeast Dynamics Co.
-0000114501,Harvest Spice Trading
-0000116877,Paprika Imports BV
-0000118340,Cocoa Basin Commodities
-0000119925,Saltwell Minerals
-0000121608,Helio Actives GmbH
-0000123194,Solmera Chemicals
-0000125730,Benzo Fine Chemicals
-0000127016,Vitamer Nutrients Inc.
-0000128449,Titania Pigments Ltd
-0000130882,Zephyr Agrochem
-0000132157,Cintara Specialty Chemicals
-0000133604,Avonia Actives
-0000135271,Nordlys Chemical AS
-0000136938,Prisma Ingredients
-0000138405,Polymer Craft Industries
-0000140112,Styrene Works Ltd
-0000141766,Verdant Packaging Co.
-0000143209,Cartona Paper Mills
-0000144873,FlexiFilm Converters
-0000146530,Baltic Resin Traders
-0000148194,Ecopack Solutions
-0000149657,Orbit Closures Inc.
-0000151028,Aurora Bottling Supplies
-0000152493,Kestrel Labels & Print
-0000154170,Sterling Manufacturing
-0000155836,Neroprox Industrial Co.
-0000157291,Engiss Industrial Supplies
-0000158964,Tyranex Solutions
-0000160317,Conficio Co.
-0000161885,Cappaberry Trading
-0000163240,Beckett Industrial
-0000164918,Gattis Engineering Works
-0000166375,Industry Intel Services
-0000167802,Highstone Maintenance
-0000169446,Vantex Equipment Co.
-0000170913,Ferrolux Metals
-0000172588,Dunbarrow Adhesives
-0000174031,Redline Freight Partners
-0000175694,Harborlink Logistics
-0000177260,Meridian Cold Chain
-0000178835,Castellan Warehousing
-0000180492,Sterling Mfg Co.
-0000182157,Polymer Craft Ltd
-0000183704,Northfield Mills Inc.
+vendor_id,vendor_name,tax_id,street,city,postal_code,country
+0000103417,Marland Sweeteners Inc.,74-6570966,145 Kiln Lane,Newark NJ,72705,US
+0000104882,Cane & Beet Refiners Ltd,GB993905029,142 Quayside Trading Estate,Sheffield,S4 1PO,GB
+0000106235,Amber Syrup Traders,68-1680926,161 Beckford Road,Louisville KY,83872,US
+0000108710,Prairie Grain Millers,62-2252212,154 Millrace Boulevard,Louisville KY,55516,US
+0000110264,Northfield Flour Mills,42-7903254,218 Cooperage Drive,Tacoma WA,82307,US
+0000112938,Yeast Dynamics Co.,66-8424535,197 Canal Street,Tacoma WA,32777,US
+0000114501,Harvest Spice Trading,74-7102493,24 Depot Street,Newark NJ,25923,US
+0000116877,Paprika Imports BV,NL323042355B01,Industrieweg 117,Eindhoven,5205 QE,NL
+0000118340,Cocoa Basin Commodities,11-4367691,174 Cooperage Drive,Newark NJ,91970,US
+0000119925,Saltwell Minerals,57-9067774,50 Depot Street,Fresno CA,60214,US
+0000121608,Helio Actives GmbH,DE619213605,Werkstrasse 31,Nuernberg,83139,DE
+0000123194,Solmera Chemicals,39-2813303,237 Foundry Avenue,Tacoma WA,28529,US
+0000125730,Benzo Fine Chemicals,65-5541640,40 Harbor Point Road,Fresno CA,19753,US
+0000127016,Vitamer Nutrients Inc.,35-8836356,190 Kiln Lane,Cincinnati OH,40618,US
+0000128449,Titania Pigments Ltd,GB531231960,167 Tannery Road,Bristol,BS27 5LZ,GB
+0000130882,Zephyr Agrochem,58-7426450,189 Harbor Point Road,Tacoma WA,99806,US
+0000132157,Cintara Specialty Chemicals,78-9936017,173 Beckford Road,Milwaukee WI,59218,US
+0000133604,Avonia Actives,75-7593168,154 Kiln Lane,Chicago IL,79549,US
+0000135271,Nordlys Chemical AS,NO799206041MVA,Havnegata 195,Trondheim,9843,NO
+0000136938,Prisma Ingredients,61-6339473,195 Ironworks Parkway,Tacoma WA,20473,US
+0000138405,Polymer Craft Industries,89-3799578,209 Union Wharf Drive,Louisville KY,98835,US
+0000140112,Styrene Works Ltd,GB119756443,104 Quayside Trading Estate,Swansea,SA13 8DV,GB
+0000141766,Verdant Packaging Co.,60-3019818,157 Depot Street,Tacoma WA,84800,US
+0000143209,Cartona Paper Mills,44-3441110,112 Ironworks Parkway,Chicago IL,98375,US
+0000144873,FlexiFilm Converters,51-3586859,196 Foundry Avenue,Cincinnati OH,12925,US
+0000146530,Baltic Resin Traders,54-8675281,213 Foundry Avenue,Chicago IL,82339,US
+0000148194,Ecopack Solutions,29-7179192,113 Canal Street,Tacoma WA,38604,US
+0000149657,Orbit Closures Inc.,22-7691279,159 Foundry Avenue,Tacoma WA,35733,US
+0000151028,Aurora Bottling Supplies,79-7473818,102 Cooperage Drive,Cincinnati OH,82066,US
+0000152493,Kestrel Labels & Print,51-8363806,159 Depot Street,Fresno CA,51800,US
+0000154170,Sterling Manufacturing,29-8252113,169 Ironworks Parkway,Milwaukee WI,92426,US
+0000155836,Neroprox Industrial Co.,60-5517580,87 Union Wharf Drive,Newark NJ,20821,US
+0000157291,Engiss Industrial Supplies,45-2474884,215 Depot Street,Fresno CA,81130,US
+0000158964,Tyranex Solutions,48-1123331,140 Harbor Point Road,Milwaukee WI,24525,US
+0000160317,Conficio Co.,43-6736587,130 Harbor Point Road,Milwaukee WI,71714,US
+0000161885,Cappaberry Trading,89-9357721,65 Ironworks Parkway,Tacoma WA,56035,US
+0000163240,Beckett Industrial,20-7154786,157 Kiln Lane,Tacoma WA,21712,US
+0000164918,Gattis Engineering Works,88-1612721,157 Cooperage Drive,Louisville KY,76756,US
+0000166375,Industry Intel Services,83-3318153,220 Union Wharf Drive,Savannah GA,12043,US
+0000167802,Highstone Maintenance,92-3944387,217 Kiln Lane,Milwaukee WI,83103,US
+0000169446,Vantex Equipment Co.,17-7522467,118 Beckford Road,Newark NJ,43592,US
+0000170913,Ferrolux Metals,34-3076996,135 Depot Street,Newark NJ,87314,US
+0000172588,Dunbarrow Adhesives,12-6965603,177 Millrace Boulevard,Louisville KY,93623,US
+0000174031,Redline Freight Partners,32-8397716,90 Beckford Road,Louisville KY,31734,US
+0000175694,Harborlink Logistics,50-7455377,204 Depot Street,Cincinnati OH,80146,US
+0000177260,Meridian Cold Chain,70-6250260,27 Harbor Point Road,Fresno CA,78324,US
+0000178835,Castellan Warehousing,65-3769642,45 Cooperage Drive,Savannah GA,53750,US
+0000180492,Sterling Mfg Co.,26-9586837,169 Ironworks Parkway,Milwaukee WI,92426,US
+0000182157,Polymer Craft Co.,24-6614774,209 Union Wharf Drive,Louisville KY,98835,US
+0000183704,Northfield Mills Inc.,29-5688443,218 Cooperage Drive,Tacoma WA,82307,US

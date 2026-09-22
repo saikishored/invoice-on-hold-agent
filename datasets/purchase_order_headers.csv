@@ -47,7 +47,7 @@ po_number,vendor_id,po_date,currency,requester,description
 4500000046,0000177260,2023-11-03,USD,viktor.horvath@example.com,Annual agreement 2024 - logistics services
 4500000047,0000178835,2023-12-09,USD,greta.lindqvist@example.com,Ad hoc purchase - pallet storage services
 4500000048,0000180492,2024-11-07,USD,lars.jorgensen@example.com,Annual agreement 2025 - maintenance and engineering services
-4500000049,0000182157,2025-03-26,GBP,joseph.mwangi@example.com,Ad hoc purchase - polypropylene resin supply
+4500000049,0000182157,2025-03-26,USD,joseph.mwangi@example.com,Ad hoc purchase - polypropylene resin supply
 4500000050,0000183704,2025-10-09,USD,yuki.tanaka@example.com,Ad hoc purchase - refined flour supply
 4500000051,0000103417,2024-04-01,USD,camille.dubois@example.com,Ad hoc purchase - invert syrup supply
 4500000052,0000104882,2024-12-26,GBP,yuki.tanaka@example.com,Annual agreement 2025 - ingredient supply
@@ -97,5 +97,5 @@ po_number,vendor_id,po_date,currency,requester,description
 4500000096,0000177260,2025-10-13,USD,mateo.alvarez@example.com,Ad hoc purchase - inbound freight services
 4500000097,0000178835,2025-07-31,USD,sofia.reyes@example.com,Ad hoc purchase - outbound distribution services
 4500000098,0000180492,2025-09-26,USD,yuki.tanaka@example.com,Ad hoc purchase - spare parts supply
-4500000099,0000182157,2023-12-13,GBP,mei.lin@example.com,Ad hoc purchase - polypropylene resin supply
+4500000099,0000182157,2023-12-13,USD,mei.lin@example.com,Ad hoc purchase - polypropylene resin supply
 4500000100,0000183704,2024-11-21,USD,yuki.tanaka@example.com,Annual agreement 2025 - ingredient supply
